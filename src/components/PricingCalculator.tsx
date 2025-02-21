@@ -2,33 +2,38 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus } from "lucide-react";
-import { BASE_PRICE, companySize, tools } from "@/data/pricingData";
+import { companySize, tools } from "@/data/pricingData";
 
 const PricingCalculator = () => {
   const [selectedSize, setSelectedSize] = useState(companySize[0].id);
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
   const [toolCounters, setToolCounters] = useState<Record<string, number>>({});
-  const [totalPrice, setTotalPrice] = useState(BASE_PRICE);
+  const [multiUserOption, setMultiUserOption] = useState<string>("1-3");
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const calculatePrice = () => {
-    const sizeMultiplier = companySize.find((size) => size.id === selectedSize)?.multiplier || 1;
+    // Base price from company size
+    const basePrice = companySize.find((size) => size.id === selectedSize)?.price || 0;
     
+    // Calculate tools price
     const toolsPrice = tools.reduce((acc, tool) => {
       if (tool.type === "counter") {
         return acc + (tool.price * (toolCounters[tool.id] || 0));
-      } else if (selectedTools.includes(tool.id)) {
+      } else if (tool.type === "select" && tool.id === "multi_users") {
+        const selectedOption = tool.options.find(opt => opt.value === multiUserOption);
+        return acc + (selectedOption?.price || 0);
+      } else if (tool.type === "checkbox" && selectedTools.includes(tool.id)) {
         return acc + tool.price;
       }
       return acc;
     }, 0);
 
-    const baseWithMultipliers = BASE_PRICE * sizeMultiplier;
-    return Math.round(baseWithMultipliers + toolsPrice);
+    return Math.round(basePrice + toolsPrice);
   };
 
   useEffect(() => {
     setTotalPrice(calculatePrice());
-  }, [selectedSize, selectedTools, toolCounters]);
+  }, [selectedSize, selectedTools, toolCounters, multiUserOption]);
 
   const handleToolToggle = (toolId: string) => {
     setSelectedTools((prev) =>
@@ -40,8 +45,15 @@ const PricingCalculator = () => {
 
   const handleCounterChange = (toolId: string, increment: boolean) => {
     setToolCounters((prev) => {
+      const tool = tools.find(t => t.id === toolId);
+      if (!tool || tool.type !== "counter") return prev;
+      
       const currentValue = prev[toolId] || 0;
-      const newValue = increment ? currentValue + 1 : Math.max(0, currentValue - 1);
+      const incrementValue = tool.increment || 1;
+      const newValue = increment 
+        ? currentValue + incrementValue 
+        : Math.max(0, currentValue - incrementValue);
+      
       return {
         ...prev,
         [toolId]: newValue
@@ -77,6 +89,7 @@ const PricingCalculator = () => {
                 >
                   <div className="font-medium">{size.name}</div>
                   <div className="text-sm opacity-80">{size.description}</div>
+                  <div className="text-sm mt-2 font-semibold">${size.price}/mes</div>
                 </button>
               ))}
             </div>
@@ -99,9 +112,10 @@ const PricingCalculator = () => {
                     <div>
                       <div className="font-medium text-gray-900">{tool.name}</div>
                       <div className="text-sm text-gray-600">
-                        {tool.type === "counter" 
-                          ? `$${tool.price} ${tool.description}`
-                          : `$${tool.price}/mes`}
+                        {tool.type === "counter" && 
+                          `$${tool.price} ${tool.description} (paquetes de ${tool.increment})`}
+                        {tool.type === "checkbox" && 
+                          `$${tool.price}/mes`}
                       </div>
                     </div>
                     {tool.type === "counter" ? (
@@ -122,6 +136,18 @@ const PricingCalculator = () => {
                           <Plus size={16} />
                         </button>
                       </div>
+                    ) : tool.type === "select" ? (
+                      <select
+                        value={multiUserOption}
+                        onChange={(e) => setMultiUserOption(e.target.value)}
+                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pricing-accent focus:border-transparent"
+                      >
+                        {tool.options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.name} - ${option.price}/mes
+                          </option>
+                        ))}
+                      </select>
                     ) : (
                       <div
                         onClick={() => handleToolToggle(tool.id)}
