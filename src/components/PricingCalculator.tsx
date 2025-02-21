@@ -1,31 +1,34 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import { BASE_PRICE, companySize, industries, tools } from "@/data/pricingData";
+import { Check, Plus, Minus } from "lucide-react";
+import { BASE_PRICE, companySize, tools } from "@/data/pricingData";
 
 const PricingCalculator = () => {
   const [selectedSize, setSelectedSize] = useState(companySize[0].id);
-  const [selectedIndustry, setSelectedIndustry] = useState(industries[0].id);
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
+  const [toolCounters, setToolCounters] = useState<Record<string, number>>({});
   const [totalPrice, setTotalPrice] = useState(BASE_PRICE);
 
   const calculatePrice = () => {
     const sizeMultiplier = companySize.find((size) => size.id === selectedSize)?.multiplier || 1;
-    const industryMultiplier = industries.find((ind) => ind.id === selectedIndustry)?.multiplier || 1;
     
-    const toolsPrice = selectedTools.reduce((acc, toolId) => {
-      const tool = tools.find((t) => t.id === toolId);
-      return acc + (tool?.price || 0);
+    const toolsPrice = tools.reduce((acc, tool) => {
+      if (tool.type === "counter") {
+        return acc + (tool.price * (toolCounters[tool.id] || 0));
+      } else if (selectedTools.includes(tool.id)) {
+        return acc + tool.price;
+      }
+      return acc;
     }, 0);
 
-    const baseWithMultipliers = BASE_PRICE * sizeMultiplier * industryMultiplier;
+    const baseWithMultipliers = BASE_PRICE * sizeMultiplier;
     return Math.round(baseWithMultipliers + toolsPrice);
   };
 
   useEffect(() => {
     setTotalPrice(calculatePrice());
-  }, [selectedSize, selectedIndustry, selectedTools]);
+  }, [selectedSize, selectedTools, toolCounters]);
 
   const handleToolToggle = (toolId: string) => {
     setSelectedTools((prev) =>
@@ -33,6 +36,17 @@ const PricingCalculator = () => {
         ? prev.filter((id) => id !== toolId)
         : [...prev, toolId]
     );
+  };
+
+  const handleCounterChange = (toolId: string, increment: boolean) => {
+    setToolCounters((prev) => {
+      const currentValue = prev[toolId] || 0;
+      const newValue = increment ? currentValue + 1 : Math.max(0, currentValue - 1);
+      return {
+        ...prev,
+        [toolId]: newValue
+      };
+    });
   };
 
   return (
@@ -69,48 +83,57 @@ const PricingCalculator = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Industria</h2>
-            <select
-              value={selectedIndustry}
-              onChange={(e) => setSelectedIndustry(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-pricing-accent focus:border-transparent transition-all duration-200"
-            >
-              {industries.map((industry) => (
-                <option key={industry.id} value={industry.id}>
-                  {industry.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Herramientas Adicionales</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h2 className="text-xl font-semibold mb-4">PowerUps</h2>
+            <div className="grid grid-cols-1 gap-4">
               {tools.map((tool) => (
                 <motion.div
                   key={tool.id}
-                  whileHover={{ scale: 1.02 }}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                    selectedTools.includes(tool.id)
+                  whileHover={{ scale: 1.01 }}
+                  className={`p-4 rounded-xl border transition-all duration-200 ${
+                    tool.type === "checkbox" && selectedTools.includes(tool.id)
                       ? "border-pricing-accent bg-pricing-accent bg-opacity-5"
-                      : "border-gray-200 hover:border-pricing-accent"
+                      : "border-gray-200"
                   }`}
-                  onClick={() => handleToolToggle(tool.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium text-gray-900">{tool.name}</div>
-                      <div className="text-sm text-gray-600">+${tool.price}/mes</div>
+                      <div className="text-sm text-gray-600">
+                        {tool.type === "counter" 
+                          ? `$${tool.price} ${tool.description}`
+                          : `$${tool.price}/mes`}
+                      </div>
                     </div>
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        selectedTools.includes(tool.id)
-                          ? "bg-pricing-accent text-white"
-                          : "border-2 border-gray-300"
-                      }`}
-                    >
-                      {selectedTools.includes(tool.id) && <Check size={14} />}
-                    </div>
+                    {tool.type === "counter" ? (
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => handleCounterChange(tool.id, false)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          <Minus size={16} />
+                        </button>
+                        <span className="w-12 text-center font-medium">
+                          {toolCounters[tool.id] || 0}
+                        </span>
+                        <button
+                          onClick={() => handleCounterChange(tool.id, true)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => handleToolToggle(tool.id)}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer ${
+                          selectedTools.includes(tool.id)
+                            ? "bg-pricing-accent text-white"
+                            : "border-2 border-gray-300"
+                        }`}
+                      >
+                        {selectedTools.includes(tool.id) && <Check size={14} />}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}
