@@ -89,7 +89,7 @@ const PricingCalculator = () => {
                 >
                   <div className="font-medium">{size.name}</div>
                   <div className="text-sm opacity-80">{size.description}</div>
-                  <div className="text-sm mt-2 font-semibold">${size.price}/mes</div>
+                  <div className="text-sm mt-2 font-semibold">USD ${size.price}/mes</div>
                 </button>
               ))}
             </div>
@@ -113,9 +113,9 @@ const PricingCalculator = () => {
                       <div className="font-medium text-gray-900">{tool.name}</div>
                       <div className="text-sm text-gray-600">
                         {tool.type === "counter" && 
-                          `$${tool.price} ${tool.description} (paquetes de ${tool.increment})`}
+                          `USD $${tool.price} ${tool.description} (paquetes de ${tool.increment})`}
                         {tool.type === "checkbox" && 
-                          `$${tool.price}/mes`}
+                          `USD $${tool.price}/mes`}
                       </div>
                     </div>
                     {tool.type === "counter" ? (
@@ -144,7 +144,7 @@ const PricingCalculator = () => {
                       >
                         {tool.options.map((option) => (
                           <option key={option.value} value={option.value}>
-                            {option.name} - ${option.price}/mes
+                            {option.name} - USD ${option.price}/mes
                           </option>
                         ))}
                       </select>
@@ -173,7 +173,7 @@ const PricingCalculator = () => {
           className="bg-pricing-accent text-white rounded-2xl p-8 text-center"
         >
           <div className="text-xl mb-2">Precio Total Estimado</div>
-          <div className="text-5xl font-bold">${totalPrice}/mes</div>
+          <div className="text-5xl font-bold">USD ${totalPrice}/mes</div>
         </motion.div>
       </div>
     </div>
