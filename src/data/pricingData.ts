@@ -1,9 +1,41 @@
 
-export const companySize = [
-  { id: "small", name: "Pequeña", price: 90, description: "1-50 empleados" },
-  { id: "medium", name: "Mediana", price: 170, description: "51-200 empleados" },
-  { id: "large", name: "Grande", price: 300, description: "201-1000 empleados" },
-  { id: "enterprise", name: "Enterprise", price: 500, description: "1000+ empleados" },
+export const packages = [
+  {
+    id: "basic",
+    name: "Básico",
+    price: 90,
+    description: "Ideal para empresas pequeñas",
+    includes: {
+      video_interviews: 20,
+      ai_evaluations: 20,
+      users: "1-3"
+    }
+  },
+  {
+    id: "professional",
+    name: "Profesional",
+    price: 170,
+    description: "Para empresas en crecimiento",
+    includes: {
+      video_interviews: 50,
+      ai_evaluations: 50,
+      users: "4-10",
+      priority_support: true
+    }
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: 300,
+    description: "Solución empresarial completa",
+    includes: {
+      video_interviews: 100,
+      ai_evaluations: 100,
+      users: "10+",
+      priority_support: true,
+      custom_reports: true
+    }
+  }
 ];
 
 export const tools = [
@@ -22,27 +54,5 @@ export const tools = [
     type: "counter",
     increment: 5,
     description: "Precio por entrevista" 
-  },
-  { 
-    id: "multi_users", 
-    name: "Gestión de Múltiples Usuarios", 
-    type: "select",
-    options: [
-      { value: "1-3", name: "1-3 usuarios", price: 10 },
-      { value: "4-10", name: "4-10 usuarios", price: 15 },
-      { value: "10+", name: "10+ usuarios", price: 20 }
-    ]
-  },
-  { 
-    id: "priority_support", 
-    name: "Soporte Prioritario", 
-    price: 0,
-    type: "checkbox" 
-  },
-  { 
-    id: "custom_reports", 
-    name: "Informes Personalizados", 
-    price: 40,
-    type: "checkbox" 
-  },
+  }
 ];

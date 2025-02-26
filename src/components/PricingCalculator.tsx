@@ -2,49 +2,38 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus } from "lucide-react";
-import { companySize, tools } from "@/data/pricingData";
+import { packages, tools } from "@/data/pricingData";
 
 const PricingCalculator = () => {
-  const [selectedSize, setSelectedSize] = useState(companySize[0].id);
-  const [selectedTools, setSelectedTools] = useState<string[]>([]);
-  const [toolCounters, setToolCounters] = useState<Record<string, number>>({});
-  const [multiUserOption, setMultiUserOption] = useState<string>("1-3");
+  const [selectedPackage, setSelectedPackage] = useState(packages[0]);
+  const [extraToolCounters, setExtraToolCounters] = useState<Record<string, number>>({});
   const [totalPrice, setTotalPrice] = useState(0);
 
   const calculatePrice = () => {
-    // Base price from company size
-    const basePrice = companySize.find((size) => size.id === selectedSize)?.price || 0;
+    // Base price from selected package
+    let total = selectedPackage.price;
     
-    // Calculate tools price
-    const toolsPrice = tools.reduce((acc, tool) => {
-      if (tool.type === "counter") {
-        return acc + (tool.price * (toolCounters[tool.id] || 0));
-      } else if (tool.type === "select" && tool.id === "multi_users") {
-        const selectedOption = tool.options.find(opt => opt.value === multiUserOption);
-        return acc + (selectedOption?.price || 0);
-      } else if (tool.type === "checkbox" && selectedTools.includes(tool.id)) {
-        return acc + tool.price;
-      }
-      return acc;
-    }, 0);
+    // Add extra evaluations and interviews
+    tools.forEach(tool => {
+      const extraAmount = extraToolCounters[tool.id] || 0;
+      total += extraAmount * tool.price;
+    });
 
-    return Math.round(basePrice + toolsPrice);
+    return Math.round(total);
   };
 
   useEffect(() => {
     setTotalPrice(calculatePrice());
-  }, [selectedSize, selectedTools, toolCounters, multiUserOption]);
+  }, [selectedPackage, extraToolCounters]);
 
-  const handleToolToggle = (toolId: string) => {
-    setSelectedTools((prev) =>
-      prev.includes(toolId)
-        ? prev.filter((id) => id !== toolId)
-        : [...prev, toolId]
-    );
+  const handlePackageSelect = (pkg: typeof packages[0]) => {
+    setSelectedPackage(pkg);
+    // Reset extra counters when changing package
+    setExtraToolCounters({});
   };
 
   const handleCounterChange = (toolId: string, increment: boolean) => {
-    setToolCounters((prev) => {
+    setExtraToolCounters((prev) => {
       const tool = tools.find(t => t.id === toolId);
       if (!tool || tool.type !== "counter") return prev;
       
@@ -69,97 +58,89 @@ const PricingCalculator = () => {
             Calculadora de Precios
           </h1>
           <p className="text-lg text-gray-600">
-            Personaliza tu plan según las necesidades de tu empresa
+            Selecciona el paquete que mejor se adapte a tus necesidades
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Tamaño de Empresa</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {companySize.map((size) => (
+            <h2 className="text-xl font-semibold mb-4">Paquetes Disponibles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {packages.map((pkg) => (
                 <button
-                  key={size.id}
-                  onClick={() => setSelectedSize(size.id)}
-                  className={`p-4 rounded-xl transition-all duration-200 ${
-                    selectedSize === size.id
+                  key={pkg.id}
+                  onClick={() => handlePackageSelect(pkg)}
+                  className={`p-6 rounded-xl transition-all duration-200 text-left ${
+                    selectedPackage.id === pkg.id
                       ? "bg-pricing-accent text-white"
                       : "bg-gray-50 hover:bg-gray-100 text-gray-800"
                   }`}
                 >
-                  <div className="font-medium">{size.name}</div>
-                  <div className="text-sm opacity-80">{size.description}</div>
-                  <div className="text-sm mt-2 font-semibold">USD ${size.price}/mes</div>
+                  <div className="font-bold text-lg mb-2">{pkg.name}</div>
+                  <div className="text-sm mb-4 opacity-90">{pkg.description}</div>
+                  <div className="text-2xl font-bold mb-4">USD ${pkg.price}/mes</div>
+                  <div className="space-y-2">
+                    <div className="text-sm">
+                      ✓ {pkg.includes.video_interviews} Videoentrevistas
+                    </div>
+                    <div className="text-sm">
+                      ✓ {pkg.includes.ai_evaluations} Evaluaciones con IA
+                    </div>
+                    <div className="text-sm">
+                      ✓ {pkg.includes.users} usuarios
+                    </div>
+                    {pkg.includes.priority_support && (
+                      <div className="text-sm">✓ Soporte Prioritario</div>
+                    )}
+                    {pkg.includes.custom_reports && (
+                      <div className="text-sm">✓ Informes Personalizados</div>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">PowerUps</h2>
+            <h2 className="text-xl font-semibold mb-4">Extras Adicionales</h2>
             <div className="grid grid-cols-1 gap-4">
               {tools.map((tool) => (
                 <motion.div
                   key={tool.id}
                   whileHover={{ scale: 1.01 }}
-                  className={`p-4 rounded-xl border transition-all duration-200 ${
-                    tool.type === "checkbox" && selectedTools.includes(tool.id)
-                      ? "border-pricing-accent bg-pricing-accent bg-opacity-5"
-                      : "border-gray-200"
-                  }`}
+                  className="p-4 rounded-xl border border-gray-200"
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium text-gray-900">{tool.name}</div>
                       <div className="text-sm text-gray-600">
-                        {tool.type === "counter" && 
-                          `USD $${tool.price} ${tool.description} (paquetes de ${tool.increment})`}
-                        {tool.type === "checkbox" && 
-                          `USD $${tool.price}/mes`}
+                        USD ${tool.price} {tool.description} (paquetes de {tool.increment})
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Incluidos en el paquete: {
+                          tool.id === 'video_interviews' 
+                            ? selectedPackage.includes.video_interviews 
+                            : selectedPackage.includes.ai_evaluations
+                        }
                       </div>
                     </div>
-                    {tool.type === "counter" ? (
-                      <div className="flex items-center space-x-3">
-                        <button
-                          onClick={() => handleCounterChange(tool.id, false)}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <Minus size={16} />
-                        </button>
-                        <span className="w-12 text-center font-medium">
-                          {toolCounters[tool.id] || 0}
-                        </span>
-                        <button
-                          onClick={() => handleCounterChange(tool.id, true)}
-                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
-                    ) : tool.type === "select" ? (
-                      <select
-                        value={multiUserOption}
-                        onChange={(e) => setMultiUserOption(e.target.value)}
-                        className="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pricing-accent focus:border-transparent"
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => handleCounterChange(tool.id, false)}
+                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       >
-                        {tool.options.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.name} - USD ${option.price}/mes
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div
-                        onClick={() => handleToolToggle(tool.id)}
-                        className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer ${
-                          selectedTools.includes(tool.id)
-                            ? "bg-pricing-accent text-white"
-                            : "border-2 border-gray-300"
-                        }`}
+                        <Minus size={16} />
+                      </button>
+                      <span className="w-12 text-center font-medium">
+                        {extraToolCounters[tool.id] || 0}
+                      </span>
+                      <button
+                        onClick={() => handleCounterChange(tool.id, true)}
+                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       >
-                        {selectedTools.includes(tool.id) && <Check size={14} />}
-                      </div>
-                    )}
+                        <Plus size={16} />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
