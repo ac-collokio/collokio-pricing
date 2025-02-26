@@ -26,7 +26,7 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         pricing: {
-          accent: "#6366F1",
+          accent: "#0EA5E9", // Cambiado a un tono verde aqua
           muted: "#94A3B8",
           light: "#F8FAFC",
         },
