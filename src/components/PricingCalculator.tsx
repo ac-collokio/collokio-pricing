@@ -54,6 +54,11 @@ const PricingCalculator = () => {
     <div className="min-h-screen bg-pricing-light py-12 px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
+          <img 
+            src="/lovable-uploads/8cfbc446-6f60-451d-965e-d58163706d74.png"
+            alt="Logo"
+            className="h-12 mx-auto mb-8"
+          />
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Calculadora de Precios
           </h1>
