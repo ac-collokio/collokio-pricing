@@ -53,16 +53,16 @@ const PricingCalculator = () => {
   return (
     <div className="min-h-screen bg-pricing-light py-6 px-4 sm:px-6 lg:px-8 animate-fade-in relative">
       {/* Logo en la esquina superior izquierda */}
-      <div className="absolute top-6 left-8">
+      <div className="absolute top-6 left-4 sm:left-8 z-10">
         <img 
           src="/lovable-uploads/8cfbc446-6f60-451d-965e-d58163706d74.png"
           alt="Logo"
-          className="h-10"
+          className="h-8 sm:h-10"
         />
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 pt-20 sm:pt-0">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Calculadora de Precios
           </h1>
@@ -74,15 +74,15 @@ const PricingCalculator = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Contenido principal (3 columnas) */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Paquetes Disponibles</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                   {packages.map((pkg) => (
                     <button
                       key={pkg.id}
                       onClick={() => handlePackageSelect(pkg)}
-                      className={`p-6 rounded-xl transition-all duration-200 text-left ${
+                      className={`p-4 sm:p-6 rounded-xl transition-all duration-200 text-left ${
                         selectedPackage.id === pkg.id
                           ? "bg-pricing-accent text-white"
                           : "bg-gray-50 hover:bg-gray-100 text-gray-800"
