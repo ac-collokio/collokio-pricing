@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus } from "lucide-react";
@@ -57,7 +58,7 @@ const PricingCalculator = () => {
         <img 
           src="/lovable-uploads/8cfbc446-6f60-451d-965e-d58163706d74.png"
           alt="Logo"
-          className="h-8 sm:h-10"
+          className="h-10 sm:h-14"
         />
       </div>
 
