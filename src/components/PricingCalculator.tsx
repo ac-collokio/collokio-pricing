@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus } from "lucide-react";
@@ -13,10 +12,11 @@ const PricingCalculator = () => {
     // Base price from selected package
     let total = selectedPackage.price;
     
-    // Add extra evaluations and interviews
+    // Add extra evaluations and interviews using package-specific prices
     tools.forEach(tool => {
       const extraAmount = extraToolCounters[tool.id] || 0;
-      total += extraAmount * tool.price;
+      const toolPrice = selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices];
+      total += extraAmount * toolPrice;
     });
 
     return Math.round(total);
@@ -114,7 +114,7 @@ const PricingCalculator = () => {
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold mb-4">Extras Adicionales</h2>
+                <h2 className="text-xl font-semibold mb-4">Extras</h2>
                 <div className="grid grid-cols-1 gap-4">
                   {tools.map((tool) => (
                     <motion.div
@@ -126,7 +126,7 @@ const PricingCalculator = () => {
                         <div>
                           <div className="font-medium text-gray-900">{tool.name}</div>
                           <div className="text-sm text-gray-600">
-                            USD ${tool.price} {tool.description} (paquetes de {tool.increment})
+                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices]} {tool.description} (paquetes de {tool.increment})
                           </div>
                           <div className="text-sm text-gray-600">
                             Incluidos en el paquete: {

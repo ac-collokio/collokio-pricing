@@ -9,6 +9,10 @@ export const packages = [
       video_interviews: 20,
       ai_evaluations: 20,
       users: "1-3"
+    },
+    tool_prices: {
+      ai_evaluations: 8,
+      video_interviews: 4
     }
   },
   {
@@ -21,6 +25,10 @@ export const packages = [
       ai_evaluations: 50,
       users: "4-10",
       priority_support: true
+    },
+    tool_prices: {
+      ai_evaluations: 5,
+      video_interviews: 2.5
     }
   },
   {
@@ -34,6 +42,10 @@ export const packages = [
       users: "10+",
       priority_support: true,
       custom_reports: true
+    },
+    tool_prices: {
+      ai_evaluations: 2.5,
+      video_interviews: 1
     }
   }
 ];
@@ -42,7 +54,6 @@ export const tools = [
   { 
     id: "ai_evaluations", 
     name: "Evaluaciones con Inteligencia Artificial", 
-    price: 5,
     type: "counter",
     increment: 5,
     description: "Precio por evaluación" 
@@ -50,7 +61,6 @@ export const tools = [
   { 
     id: "video_interviews", 
     name: "Videoentrevistas", 
-    price: 2.5,
     type: "counter",
     increment: 5,
     description: "Precio por entrevista" 
