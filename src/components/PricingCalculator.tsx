@@ -51,6 +51,14 @@ const PricingCalculator = () => {
     });
   };
 
+  // Filter tools to hide extra_users for Enterprise package
+  const displayTools = tools.filter(tool => {
+    if (tool.id === "extra_users" && selectedPackage.id === "enterprise") {
+      return false;
+    }
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-pricing-light py-6 px-4 sm:px-6 lg:px-8 animate-fade-in relative">
       {/* Logo en la esquina superior izquierda */}
@@ -117,7 +125,7 @@ const PricingCalculator = () => {
               <div>
                 <h2 className="text-xl font-semibold mb-4">Extras</h2>
                 <div className="grid grid-cols-1 gap-4">
-                  {tools.map((tool) => (
+                  {displayTools.map((tool) => (
                     <motion.div
                       key={tool.id}
                       whileHover={{ scale: 1.01 }}

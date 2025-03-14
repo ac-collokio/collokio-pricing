@@ -13,7 +13,7 @@ export const packages = [
     tool_prices: {
       ai_evaluations: 8,
       video_interviews: 4,
-      extra_users: 15
+      extra_users: 2
     }
   },
   {
@@ -30,7 +30,7 @@ export const packages = [
     tool_prices: {
       ai_evaluations: 5,
       video_interviews: 2.5,
-      extra_users: 10
+      extra_users: 1
     }
   },
   {
@@ -41,14 +41,14 @@ export const packages = [
     includes: {
       video_interviews: 100,
       ai_evaluations: 100,
-      users: "10+",
+      users: "Ilimitados",
       priority_support: true,
       custom_reports: true
     },
     tool_prices: {
       ai_evaluations: 2.5,
       video_interviews: 1,
-      extra_users: 5
+      extra_users: 0
     }
   }
 ];
