@@ -12,7 +12,8 @@ export const packages = [
     },
     tool_prices: {
       ai_evaluations: 8,
-      video_interviews: 4
+      video_interviews: 4,
+      extra_users: 15
     }
   },
   {
@@ -28,7 +29,8 @@ export const packages = [
     },
     tool_prices: {
       ai_evaluations: 5,
-      video_interviews: 2.5
+      video_interviews: 2.5,
+      extra_users: 10
     }
   },
   {
@@ -45,7 +47,8 @@ export const packages = [
     },
     tool_prices: {
       ai_evaluations: 2.5,
-      video_interviews: 1
+      video_interviews: 1,
+      extra_users: 5
     }
   }
 ];
@@ -64,5 +67,12 @@ export const tools = [
     type: "counter",
     increment: 5,
     description: "Precio por entrevista" 
+  },
+  {
+    id: "extra_users",
+    name: "Usuarios adicionales",
+    type: "counter",
+    increment: 1,
+    description: "Precio por usuario"
   }
 ];

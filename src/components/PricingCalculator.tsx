@@ -13,7 +13,7 @@ const PricingCalculator = () => {
     // Base price from selected package
     let total = selectedPackage.price;
     
-    // Add extra evaluations and interviews using package-specific prices
+    // Add extra evaluations, interviews, and users using package-specific prices
     tools.forEach(tool => {
       const extraAmount = extraToolCounters[tool.id] || 0;
       const toolPrice = selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices];
@@ -127,15 +127,22 @@ const PricingCalculator = () => {
                         <div>
                           <div className="font-medium text-gray-900">{tool.name}</div>
                           <div className="text-sm text-gray-600">
-                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices]} {tool.description} (paquetes de {tool.increment})
+                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices]} {tool.description} {tool.increment > 1 ? `(paquetes de ${tool.increment})` : ''}
                           </div>
-                          <div className="text-sm text-gray-600">
-                            Incluidos en el paquete: {
-                              tool.id === 'video_interviews' 
-                                ? selectedPackage.includes.video_interviews 
-                                : selectedPackage.includes.ai_evaluations
-                            }
-                          </div>
+                          {tool.id !== 'extra_users' && (
+                            <div className="text-sm text-gray-600">
+                              Incluidos en el paquete: {
+                                tool.id === 'video_interviews' 
+                                  ? selectedPackage.includes.video_interviews 
+                                  : selectedPackage.includes.ai_evaluations
+                              }
+                            </div>
+                          )}
+                          {tool.id === 'extra_users' && (
+                            <div className="text-sm text-gray-600">
+                              Incluidos en el paquete: {selectedPackage.includes.users}
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center space-x-3">
                           <button
