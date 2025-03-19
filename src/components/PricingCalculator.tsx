@@ -27,6 +27,23 @@ const PricingCalculator = () => {
     setTotalPrice(calculatePrice());
   }, [selectedPackage, extraToolCounters]);
 
+  useEffect(() => {
+    // Send height updates to parent window for iframe resizing
+    const sendHeight = () => {
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ type: 'resize', height }, '*');
+    };
+
+    // Run once on load and whenever window resizes
+    sendHeight();
+    window.addEventListener('resize', sendHeight);
+    
+    // Run again after a short delay to account for any animations
+    setTimeout(sendHeight, 100);
+
+    return () => window.removeEventListener('resize', sendHeight);
+  }, []);
+
   const handlePackageSelect = (pkg: typeof packages[0]) => {
     setSelectedPackage(pkg);
     // Reset extra counters when changing package
@@ -60,19 +77,15 @@ const PricingCalculator = () => {
   });
 
   return (
-    <div className="min-h-screen bg-pricing-light py-6 px-4 sm:px-6 lg:px-8 animate-fade-in relative">
-      {/* Logo en la esquina superior izquierda */}
-      <div className="absolute top-6 left-4 sm:left-8 z-10">
-        <img 
-          src="/lovable-uploads/8cfbc446-6f60-451d-965e-d58163706d74.png"
-          alt="Logo"
-          className="h-10 sm:h-14"
-        />
-      </div>
-
+    <div className="bg-pricing-light py-4 px-2 sm:px-4 lg:px-6 animate-fade-in">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8 pt-20 sm:pt-0">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6">
+          <img 
+            src="/lovable-uploads/8cfbc446-6f60-451d-965e-d58163706d74.png"
+            alt="Logo"
+            className="h-10 sm:h-14 mx-auto mb-4"
+          />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Calculadora de Precios
           </h1>
           <p className="text-lg text-gray-600">
@@ -80,18 +93,18 @@ const PricingCalculator = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Contenido principal (3 columnas) */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
-              <div className="mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
+              <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-4">Paquetes Disponibles</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {packages.map((pkg) => (
                     <button
                       key={pkg.id}
                       onClick={() => handlePackageSelect(pkg)}
-                      className={`p-4 sm:p-6 rounded-xl transition-all duration-200 text-left ${
+                      className={`p-4 rounded-xl transition-all duration-200 text-left ${
                         selectedPackage.id === pkg.id
                           ? "bg-pricing-accent text-white"
                           : "bg-gray-50 hover:bg-gray-100 text-gray-800"
@@ -182,7 +195,7 @@ const PricingCalculator = () => {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-pricing-accent text-white rounded-2xl p-8 text-center sticky top-6"
+              className="bg-pricing-accent text-white rounded-2xl p-6 text-center"
             >
               <div className="text-xl mb-2">Precio Total Estimado</div>
               <div className="text-5xl font-bold">USD ${totalPrice}/mes</div>
