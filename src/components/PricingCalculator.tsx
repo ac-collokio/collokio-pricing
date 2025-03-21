@@ -1,12 +1,15 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, Plus, Minus } from "lucide-react";
-import { packages, tools } from "@/data/pricingData";
+import { Check, Plus, Minus, Calendar, Clock } from "lucide-react";
+import { packages, tools, ANNUAL_DISCOUNT } from "@/data/pricingData";
+import { Switch } from "@/components/ui/switch";
 
 const PricingCalculator = () => {
   const [selectedPackage, setSelectedPackage] = useState(packages[0]);
   const [extraToolCounters, setExtraToolCounters] = useState<Record<string, number>>({});
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isAnnual, setIsAnnual] = useState(false);
 
   const calculatePrice = () => {
     let total = selectedPackage.price;
@@ -17,12 +20,19 @@ const PricingCalculator = () => {
       total += extraAmount * toolPrice;
     });
 
+    // Apply annual discount if selected
+    if (isAnnual) {
+      const annualPrice = total * 12;
+      const discountAmount = annualPrice * ANNUAL_DISCOUNT;
+      return Math.round(annualPrice - discountAmount);
+    }
+
     return Math.round(total);
   };
 
   useEffect(() => {
     setTotalPrice(calculatePrice());
-  }, [selectedPackage, extraToolCounters]);
+  }, [selectedPackage, extraToolCounters, isAnnual]);
 
   useEffect(() => {
     const sendHeight = () => {
@@ -85,6 +95,31 @@ const PricingCalculator = () => {
           </p>
         </div>
 
+        <div className="mb-6 flex justify-center items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-pricing-accent" />
+              <span className={`text-sm font-medium ${!isAnnual ? "text-pricing-accent" : "text-gray-500"}`}>Pago Mensual</span>
+            </div>
+            
+            <Switch 
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+              className="data-[state=checked]:bg-pricing-accent"
+            />
+            
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-pricing-accent" />
+              <span className={`text-sm font-medium ${isAnnual ? "text-pricing-accent" : "text-gray-500"}`}>
+                Pago Anual
+                <span className="ml-1 text-xs bg-pricing-accent text-white px-1.5 py-0.5 rounded-full">
+                  -10%
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
@@ -103,7 +138,12 @@ const PricingCalculator = () => {
                     >
                       <div className="font-bold text-lg mb-2">{pkg.name}</div>
                       <div className="text-sm mb-4 opacity-90">{pkg.description}</div>
-                      <div className="text-2xl font-bold mb-4">USD ${pkg.price}/mes</div>
+                      <div className="text-2xl font-bold mb-4">
+                        USD ${isAnnual 
+                          ? Math.round(pkg.price * 12 * (1 - ANNUAL_DISCOUNT)) 
+                          : pkg.price}
+                        <span className="text-sm font-normal">/{isAnnual ? 'año' : 'mes'}</span>
+                      </div>
                       <div className="space-y-2">
                         <div className="text-sm">
                           ✓ {pkg.includes.video_interviews} Videoentrevistas
@@ -139,7 +179,8 @@ const PricingCalculator = () => {
                         <div>
                           <div className="font-medium text-gray-900">{tool.name}</div>
                           <div className="text-sm text-gray-600">
-                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices]} {tool.description} {tool.increment > 1 ? `(paquetes de ${tool.increment})` : ''}
+                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices] * (isAnnual ? 12 * (1 - ANNUAL_DISCOUNT) : 1)} {tool.description} {tool.increment > 1 ? `(paquetes de ${tool.increment})` : ''}
+                            {isAnnual && <span className="ml-1 text-xs text-pricing-accent">-10%</span>}
                           </div>
                           {tool.id !== 'extra_users' && (
                             <div className="text-sm text-gray-600">
@@ -188,7 +229,15 @@ const PricingCalculator = () => {
               className="bg-pricing-accent text-white rounded-2xl p-6 text-center"
             >
               <div className="text-xl mb-2">Precio Total Estimado</div>
-              <div className="text-5xl font-bold">USD ${totalPrice}/mes</div>
+              <div className="text-5xl font-bold">
+                USD ${totalPrice}
+                <span className="text-sm font-normal block mt-1">/{isAnnual ? 'año' : 'mes'}</span>
+              </div>
+              {isAnnual && (
+                <div className="mt-3 text-sm bg-white bg-opacity-20 rounded-lg p-2">
+                  Ahorro del 10% con pago anual
+                </div>
+              )}
             </motion.div>
           </div>
         </div>

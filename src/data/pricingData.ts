@@ -77,3 +77,5 @@ export const tools = [
     description: "Precio por usuario"
   }
 ];
+
+export const ANNUAL_DISCOUNT = 0.10; // 10% discount for annual payments
