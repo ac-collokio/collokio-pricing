@@ -8,7 +8,8 @@ export const packages = [
     includes: {
       video_interviews: 20,
       ai_evaluations: 20,
-      users: "1-3"
+      users: "3 usuarios",
+      priority_support: false
     },
     tool_prices: {
       ai_evaluations: 8,
@@ -24,7 +25,7 @@ export const packages = [
     includes: {
       video_interviews: 50,
       ai_evaluations: 50,
-      users: "4-10",
+      users: "10 usuarios",
       priority_support: true
     },
     tool_prices: {
