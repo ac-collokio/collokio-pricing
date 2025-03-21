@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus } from "lucide-react";
@@ -10,10 +9,8 @@ const PricingCalculator = () => {
   const [totalPrice, setTotalPrice] = useState(0);
 
   const calculatePrice = () => {
-    // Base price from selected package
     let total = selectedPackage.price;
     
-    // Add extra evaluations, interviews, and users using package-specific prices
     tools.forEach(tool => {
       const extraAmount = extraToolCounters[tool.id] || 0;
       const toolPrice = selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices];
@@ -28,17 +25,14 @@ const PricingCalculator = () => {
   }, [selectedPackage, extraToolCounters]);
 
   useEffect(() => {
-    // Send height updates to parent window for iframe resizing
     const sendHeight = () => {
       const height = document.body.scrollHeight;
       window.parent.postMessage({ type: 'resize', height }, '*');
     };
 
-    // Run once on load and whenever window resizes
     sendHeight();
     window.addEventListener('resize', sendHeight);
     
-    // Run again after a short delay to account for any animations
     setTimeout(sendHeight, 100);
 
     return () => window.removeEventListener('resize', sendHeight);
@@ -46,7 +40,6 @@ const PricingCalculator = () => {
 
   const handlePackageSelect = (pkg: typeof packages[0]) => {
     setSelectedPackage(pkg);
-    // Reset extra counters when changing package
     setExtraToolCounters({});
   };
 
@@ -68,7 +61,6 @@ const PricingCalculator = () => {
     });
   };
 
-  // Filter tools to hide extra_users for Enterprise package
   const displayTools = tools.filter(tool => {
     if (tool.id === "extra_users" && selectedPackage.id === "enterprise") {
       return false;
@@ -94,7 +86,6 @@ const PricingCalculator = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          {/* Contenido principal (3 columnas) */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
               <div className="mb-6">
@@ -121,7 +112,7 @@ const PricingCalculator = () => {
                           ✓ {pkg.includes.ai_evaluations} Evaluaciones con IA
                         </div>
                         <div className="text-sm">
-                          ✓ {pkg.includes.users} usuarios
+                          ✓ {pkg.includes.users}
                         </div>
                         {pkg.includes.priority_support && (
                           <div className="text-sm">✓ Soporte Prioritario</div>
@@ -190,7 +181,6 @@ const PricingCalculator = () => {
             </div>
           </div>
 
-          {/* Panel de precio (1 columna) */}
           <div className="lg:col-span-1">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}

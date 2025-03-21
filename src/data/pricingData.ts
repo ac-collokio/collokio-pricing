@@ -42,7 +42,7 @@ export const packages = [
     includes: {
       video_interviews: 100,
       ai_evaluations: 100,
-      users: "Usuarios Ilimitados",
+      users: "Usuarios ilimitados",
       priority_support: true,
       custom_reports: true
     },
