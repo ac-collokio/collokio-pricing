@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus, Calendar, Clock } from "lucide-react";
@@ -19,14 +20,17 @@ const PricingCalculator = () => {
       total += extraAmount * toolPrice;
     });
 
+    if (isAnnual) {
+      // Apply discount to monthly price when annual payment is selected
+      total = total * (1 - ANNUAL_DISCOUNT);
+    }
+
     return Math.round(total);
   };
 
   const calculateAnnualTotal = () => {
     const monthlyPrice = calculatePrice();
-    const annualPrice = monthlyPrice * 12;
-    const discountAmount = annualPrice * ANNUAL_DISCOUNT;
-    return Math.round(annualPrice - discountAmount);
+    return Math.round(monthlyPrice * 12);
   };
 
   useEffect(() => {
@@ -138,7 +142,7 @@ const PricingCalculator = () => {
                       <div className="font-bold text-lg mb-2">{pkg.name}</div>
                       <div className="text-sm mb-4 opacity-90">{pkg.description}</div>
                       <div className="text-2xl font-bold mb-4">
-                        USD ${pkg.price}
+                        USD ${isAnnual ? Math.round(pkg.price * (1 - ANNUAL_DISCOUNT)) : pkg.price}
                         <span className="text-sm font-normal">/mes</span>
                       </div>
                       <div className="space-y-2">
@@ -228,7 +232,7 @@ const PricingCalculator = () => {
               {isAnnual && (
                 <div className="mt-3 text-sm bg-white bg-opacity-20 rounded-lg p-2">
                   Precio anual: USD ${calculateAnnualTotal()} 
-                  <span className="block">(Ahorro del 30%)</span>
+                  <span className="block">(30% de descuento aplicado)</span>
                 </div>
               )}
             </motion.div>
