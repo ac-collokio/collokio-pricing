@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Plus, Minus, Calendar, Clock } from "lucide-react";
@@ -20,14 +19,14 @@ const PricingCalculator = () => {
       total += extraAmount * toolPrice;
     });
 
-    // Apply annual discount if selected
-    if (isAnnual) {
-      const annualPrice = total * 12;
-      const discountAmount = annualPrice * ANNUAL_DISCOUNT;
-      return Math.round(annualPrice - discountAmount);
-    }
-
     return Math.round(total);
+  };
+
+  const calculateAnnualTotal = () => {
+    const monthlyPrice = calculatePrice();
+    const annualPrice = monthlyPrice * 12;
+    const discountAmount = annualPrice * ANNUAL_DISCOUNT;
+    return Math.round(annualPrice - discountAmount);
   };
 
   useEffect(() => {
@@ -113,7 +112,7 @@ const PricingCalculator = () => {
               <span className={`text-sm font-medium ${isAnnual ? "text-pricing-accent" : "text-gray-500"}`}>
                 Pago Anual
                 <span className="ml-1 text-xs bg-pricing-accent text-white px-1.5 py-0.5 rounded-full">
-                  -10%
+                  -30%
                 </span>
               </span>
             </div>
@@ -139,17 +138,15 @@ const PricingCalculator = () => {
                       <div className="font-bold text-lg mb-2">{pkg.name}</div>
                       <div className="text-sm mb-4 opacity-90">{pkg.description}</div>
                       <div className="text-2xl font-bold mb-4">
-                        USD ${isAnnual 
-                          ? Math.round(pkg.price * 12 * (1 - ANNUAL_DISCOUNT)) 
-                          : pkg.price}
-                        <span className="text-sm font-normal">/{isAnnual ? 'año' : 'mes'}</span>
+                        USD ${pkg.price}
+                        <span className="text-sm font-normal">/mes</span>
                       </div>
                       <div className="space-y-2">
                         <div className="text-sm">
                           ✓ {pkg.includes.video_interviews} Videoentrevistas
                         </div>
                         <div className="text-sm">
-                          ✓ {pkg.includes.ai_evaluations} Evaluaciones con IA
+                          ✓ {pkg.includes.interview_flows} Flujos de Entrevistas
                         </div>
                         <div className="text-sm">
                           ✓ {pkg.includes.users}
@@ -179,16 +176,11 @@ const PricingCalculator = () => {
                         <div>
                           <div className="font-medium text-gray-900">{tool.name}</div>
                           <div className="text-sm text-gray-600">
-                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices] * (isAnnual ? 12 * (1 - ANNUAL_DISCOUNT) : 1)} {tool.description} {tool.increment > 1 ? `(paquetes de ${tool.increment})` : ''}
-                            {isAnnual && <span className="ml-1 text-xs text-pricing-accent">-10%</span>}
+                            USD ${selectedPackage.tool_prices[tool.id as keyof typeof selectedPackage.tool_prices]} {tool.description} {tool.increment > 1 ? `(paquetes de ${tool.increment})` : ''}
                           </div>
-                          {tool.id !== 'extra_users' && (
+                          {tool.id === 'video_interviews' && (
                             <div className="text-sm text-gray-600">
-                              Incluidos en el paquete: {
-                                tool.id === 'video_interviews' 
-                                  ? selectedPackage.includes.video_interviews 
-                                  : selectedPackage.includes.ai_evaluations
-                              }
+                              Incluidos en el paquete: {selectedPackage.includes.video_interviews}
                             </div>
                           )}
                           {tool.id === 'extra_users' && (
@@ -231,11 +223,12 @@ const PricingCalculator = () => {
               <div className="text-xl mb-2">Precio Total Estimado</div>
               <div className="text-5xl font-bold">
                 USD ${totalPrice}
-                <span className="text-sm font-normal block mt-1">/{isAnnual ? 'año' : 'mes'}</span>
+                <span className="text-sm font-normal block mt-1">/mes</span>
               </div>
               {isAnnual && (
                 <div className="mt-3 text-sm bg-white bg-opacity-20 rounded-lg p-2">
-                  Ahorro del 10% con pago anual
+                  Precio anual: USD ${calculateAnnualTotal()} 
+                  <span className="block">(Ahorro del 30%)</span>
                 </div>
               )}
             </motion.div>

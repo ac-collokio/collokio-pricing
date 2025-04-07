@@ -3,51 +3,48 @@ export const packages = [
   {
     id: "basic",
     name: "Básico",
-    price: 90,
+    price: 50,
     description: "Ideal para empresas pequeñas",
     includes: {
-      video_interviews: 20,
-      ai_evaluations: 20,
+      video_interviews: 50,
       users: "3 usuarios",
-      priority_support: false
+      priority_support: false,
+      interview_flows: 2
     },
     tool_prices: {
-      ai_evaluations: 8,
-      video_interviews: 4,
+      video_interviews: 5,
       extra_users: 2
     }
   },
   {
     id: "professional",
     name: "Profesional",
-    price: 170,
+    price: 90,
     description: "Para empresas en crecimiento",
     includes: {
-      video_interviews: 50,
-      ai_evaluations: 50,
+      video_interviews: 250,
       users: "10 usuarios",
-      priority_support: true
+      priority_support: true,
+      interview_flows: 5
     },
     tool_prices: {
-      ai_evaluations: 5,
-      video_interviews: 2.5,
+      video_interviews: 3,
       extra_users: 1
     }
   },
   {
     id: "enterprise",
     name: "Enterprise",
-    price: 300,
+    price: 200,
     description: "Solución empresarial completa",
     includes: {
-      video_interviews: 100,
-      ai_evaluations: 100,
+      video_interviews: 700,
       users: "Usuarios ilimitados",
       priority_support: true,
-      custom_reports: true
+      custom_reports: true,
+      interview_flows: 15
     },
     tool_prices: {
-      ai_evaluations: 2.5,
       video_interviews: 1,
       extra_users: 0
     }
@@ -55,13 +52,6 @@ export const packages = [
 ];
 
 export const tools = [
-  { 
-    id: "ai_evaluations", 
-    name: "Evaluaciones con Inteligencia Artificial", 
-    type: "counter",
-    increment: 5,
-    description: "Precio por evaluación" 
-  },
   { 
     id: "video_interviews", 
     name: "Videoentrevistas", 
@@ -78,4 +68,4 @@ export const tools = [
   }
 ];
 
-export const ANNUAL_DISCOUNT = 0.10; // 10% discount for annual payments
+export const ANNUAL_DISCOUNT = 0.30; // 30% discount for annual payments
