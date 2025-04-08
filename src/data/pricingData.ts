@@ -1,4 +1,3 @@
-
 export const packages = [
   {
     id: "basic",
@@ -71,4 +70,4 @@ export const tools = [
   }
 ];
 
-export const ANNUAL_DISCOUNT = 0.30; // 30% discount for annual payments
+export const ANNUAL_DISCOUNT = 0.1667; // 16.67% discount (2 months free) for annual payments

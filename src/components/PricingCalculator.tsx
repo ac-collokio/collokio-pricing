@@ -116,7 +116,7 @@ const PricingCalculator = () => {
               <span className={`text-sm font-medium ${isAnnual ? "text-pricing-accent" : "text-gray-500"}`}>
                 Pago Anual
                 <span className="ml-1 text-xs bg-pricing-accent text-white px-1.5 py-0.5 rounded-full">
-                  -30%
+                  2 meses gratis
                 </span>
               </span>
             </div>
@@ -237,7 +237,7 @@ const PricingCalculator = () => {
               {isAnnual && (
                 <div className="mt-3 text-sm bg-white bg-opacity-20 rounded-lg p-2">
                   Precio anual: USD ${calculateAnnualTotal()} 
-                  <span className="block">(30% de descuento aplicado)</span>
+                  <span className="block">(2 meses gratis)</span>
                 </div>
               )}
             </motion.div>
