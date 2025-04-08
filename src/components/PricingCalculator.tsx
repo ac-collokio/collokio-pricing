@@ -142,7 +142,12 @@ const PricingCalculator = () => {
                       <div className="font-bold text-lg mb-2">{pkg.name}</div>
                       <div className="text-sm mb-4 opacity-90">{pkg.description}</div>
                       <div className="text-2xl font-bold mb-4">
-                        USD ${isAnnual ? Math.round(pkg.price * (1 - ANNUAL_DISCOUNT)) : pkg.price}
+                        <span className="inline-flex items-center">
+                          <span className="line-through text-gray-400 text-lg mr-2">
+                            USD ${pkg.oldPrice}
+                          </span>
+                          USD ${isAnnual ? Math.round(pkg.price * (1 - ANNUAL_DISCOUNT)) : pkg.price}
+                        </span>
                         <span className="text-sm font-normal">/mes</span>
                       </div>
                       <div className="space-y-2">

@@ -4,6 +4,7 @@ export const packages = [
     id: "basic",
     name: "Básico",
     price: 50,
+    oldPrice: 90,
     description: "Ideal para empresas pequeñas",
     includes: {
       video_interviews: 50,
@@ -20,6 +21,7 @@ export const packages = [
     id: "professional",
     name: "Profesional",
     price: 90,
+    oldPrice: 170,
     description: "Para empresas en crecimiento",
     includes: {
       video_interviews: 250,
@@ -36,6 +38,7 @@ export const packages = [
     id: "enterprise",
     name: "Enterprise",
     price: 200,
+    oldPrice: 350,
     description: "Solución empresarial completa",
     includes: {
       video_interviews: 700,
